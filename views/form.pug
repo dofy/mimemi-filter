@@ -1,0 +1,63 @@
+extends layout
+
+block content
+  h1
+    a(href='/')= title
+  form
+    .form-group.bg-light.p-3.shadow-sm
+      lable(for='murl') MIMEMI Subscribe Url
+      input#murl.form-control(name='murl' placeholder='Your MIMEMI Subscribe Url' value=data.murl)
+    .form-group.bg-light.p-3.shadow-sm
+      legend Exclude Point(s)
+      .btn-group.btn-group-toggle(data-toggle='buttons')
+        each item, index in points
+          label.btn.btn-secondary(class={active: (data.exclude && (data.exclude == item.value || data.exclude.indexOf(item.value)) !== -1)})
+            input.custom-control-input(
+              name='exclude' type='checkbox' value=item.value
+              checked=(data.exclude && (data.exclude == item.value || data.exclude.indexOf(item.value)) !== -1) && 'checked')
+            | #{item.title}
+    .form-group.bg-light.p-3.shadow-sm
+      .input-group.mb-3
+        .input-group-prepend
+          label(for='suburl').input-group-text Subscribe URL
+        input#suburl.form-control.text-muted(type='text' readonly)
+        .input-group-append
+          button.btn.btn-primary(type='button' value='suburl') Copy
+      .input-group.mb-3
+        .input-group-prepend
+          label(for='editurl').input-group-text Subscribe Editor
+        input#editurl.form-control.text-muted(type='text' readonly)
+        .input-group-append
+          button.btn.btn-primary(type='button' value='editurl') Copy
+
+block javascript
+  script.
+    const suburl = '#{suburl}'
+    updateUrl()
+    $('input').change(updateUrl)
+    $('button').click(evt => {
+      let input = $(`#${evt.currentTarget.value}`)
+      let target = $(evt.currentTarget)
+      input.focus().select()
+      try {
+        document.execCommand('Copy')
+        target.text('Copied!')
+        setTimeout(() => {
+          target.text('Copy')
+        }, 1500)
+        $('<input />').appendTo('body').focus().remove()
+      }
+      catch (e) {
+        console.error(e)
+      }
+    })
+
+    function updateUrl () {
+      let params = [] 
+      $('form').serializeArray().forEach(item => {
+        params.push(item.name + '=' + encodeURIComponent(item.value))
+      })
+      params = params.join('&')
+      $('#suburl').val(suburl + '/sub?' + params)
+      $('#editurl').val(suburl + '/edit?' + params)
+    }

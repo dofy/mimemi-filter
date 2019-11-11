@@ -1,1 +1,12 @@
-body{padding:50px;font:14px "Lucida Grande",Helvetica,Arial,sans-serif}a{color:#00B7FF}
+body{
+  padding: 50px;
+  font: 14px "Lucida Grande",Helvetica,Arial,sans-serif;
+}
+a {
+  color:#00B7FF;
+}
+.copy {
+  margin-top: 70px;
+  font-family: 'Courier New', Courier, monospace;
+  color: #ccc;
+}

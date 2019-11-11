@@ -1,24 +1,10 @@
 let express = require('express');
 let router = express.Router();
 let request = require('request')
+let URL = require('url')
+let QS = require('querystring')
 
 const title = 'MIMEMI Filter'
-// const baseUrl = 'https://suburl.mimemi.net/link/'
-// const mimemi = {
-//   'SSR': [
-//     { title: 'SSR', value: 'mu=0', },
-//     { title: 'SSR 995', value: 'mu=1', },
-//     { title: 'ClashR', value: 'clashr=1', },
-//   ],
-//   'SS': [
-//     { title: 'SSD', value: 'mu=3', },
-//     { title: 'SS', value: 'mu=4', },
-//     { title: 'Surge 2', value: 'surge=2', },
-//     { title: 'Surge 3', value: 'surge=3', },
-//     { title: 'Clash', value: 'dns=1&clash=1', },
-//     { title: 'Surfboard', value: 'surfboard=1', },
-//   ],
-// }
 const points = [
   { title: 'V0', value: '.V0.', },
   { title: 'V1', value: '.V1.', },
@@ -35,30 +21,32 @@ router.get('/', function(req, res, next) {
   res.render('index', { title });
 });
 
-// create new
+// subscribe
 router.get('/sub', (req, res, next) => {
   const data = req.query
   const mimemiUrl = decodeURIComponent(data.murl)
+  const qs = QS.parse(URL.parse(mimemiUrl).query)
+  const reg = new RegExp(data.exclude.join('|').replace(/\./g, '\\b'), 'i')
   request.get(mimemiUrl, (err, response, body) => {
-    let newBody
-    if (/\?mu\=\d+/.test(mimemiUrl)) {
-      // base64
-      let reg = new RegExp(data.exclude.join('|').replace(/\./g, '\\b'), 'i')
-      body = base64_decode(body).trim().split(/\s+/)
-      newBody = []
-      body.map(item => {
-        item = decodeURIComponent(item)
-        if (!reg.test(item)) {
-          newBody.push(item)
-        }
-      })
-      console.log(data)
+    console.log(response.headers)
+    let type
+    if (qs.mu) {
+      type = 'base64 txt'
+      switch (qs.mu) {
+        case 0:
+        case 0:
+        case 0:
+        case 0:
+          break;
+        default:
+          break;
+      }
+    } else if(qs.clash || qs.clashr) {
+      type = 'yaml'
     } else {
-      // config
-      newBody = body
-      console.log('config...')
+      type = 'config'
     }
-    res.status(200).json({ newBody })
+    res.status(200).json({ type, body })
   })
 })
 
@@ -75,9 +63,9 @@ router.get('/edit', (req, res, next) => {
 module.exports = router;
 
 function base64_encode (str) {
-  return Buffer(str.toString()).toString('base64');
+  return Buffer.from(str.toString()).toString('base64');
 }
 
 function base64_decode (str) {
-  return new Buffer(str, 'base64').toString();
+  return Buffer.from(str.toString(), 'base64').toString();
 }

@@ -1,8 +1,13 @@
-let express = require('express');
-let router = express.Router();
-let request = require('request')
-let URL = require('url')
-let QS = require('querystring')
+const createError = require('http-errors');
+const express = require('express');
+const request = require('request')
+const util = require('util')
+const yaml = require('yaml')
+const ini = require('ini')
+const URL = require('url')
+const QS = require('querystring')
+
+const router = express.Router();
 
 const title = 'MIMEMI Filter'
 const points = [
@@ -16,42 +21,8 @@ const points = [
   { title: '特殊用途', value: '特殊用途', },
 ]
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title });
-});
-
-// subscribe
-router.get('/sub', (req, res, next) => {
-  const data = req.query
-  const mimemiUrl = decodeURIComponent(data.murl)
-  const qs = QS.parse(URL.parse(mimemiUrl).query)
-  const reg = new RegExp(data.exclude.join('|').replace(/\./g, '\\b'), 'i')
-  request.get(mimemiUrl, (err, response, body) => {
-    console.log(response.headers)
-    let type
-    if (qs.mu) {
-      type = 'base64 txt'
-      switch (qs.mu) {
-        case 0:
-        case 0:
-        case 0:
-        case 0:
-          break;
-        default:
-          break;
-      }
-    } else if(qs.clash || qs.clashr) {
-      type = 'yaml'
-    } else {
-      type = 'config'
-    }
-    res.status(200).json({ type, body })
-  })
-})
-
 // edit url
-router.get('/edit', (req, res, next) => {
+router.get('/', (req, res, next) => {
   const data = req.query
   res.render('form', {
     // title, data, baseUrl, mimemi, points,
@@ -60,12 +31,93 @@ router.get('/edit', (req, res, next) => {
   });
 })
 
+// subscribe
+router.get('/sub', (req, res, next) => {
+  const data = req.query
+  const mimemiUrl = decodeURIComponent(data.murl)
+  const mimemiType = getMimemiType(mimemiUrl)
+
+  if (mimemiType === 0) {
+    // wrong url
+    next(createError(404, 'MIMEMI Subscribe URL is wrong.'))
+  } else if (!data.exclude) {
+    // redirect
+    res.redirect(mimemiUrl)
+  } else {
+    // filter
+    let excludeReg = new RegExp((util.isArray(data.exclude) ? data.exclude.join('|') : data.exclude).replace(/\./g, '\\b'), 'i')
+    request.get(mimemiUrl, (err, response, body) => {
+      // res.header(response.headers)
+      let type = 'base64'
+      switch (mimemiType) {
+        case 'ssr':
+          body = base64_decode(body).trim().split(/\s+/)
+          body = body.map( ssrParser )
+          break
+        case 'ssr995':
+          break
+        case 'ssd':
+          break
+        case 'ss':
+          break
+        case 'clash':
+          type = 'yaml'
+          break
+        case 'surge':
+          type = 'ini'
+          break
+        default: break
+      }
+      res.status(200).json({ type, body })
+    })
+  }
+})
+
 module.exports = router;
 
 function base64_encode (str) {
-  return Buffer.from(str.toString()).toString('base64');
+  return Buffer.from(str).toString('base64')
 }
 
 function base64_decode (str) {
-  return Buffer.from(str.toString(), 'base64').toString();
+  return Buffer.from(str, 'base64').toString()
+}
+
+function ssrParser (url) {
+  url = url.replace('ssr://', '')
+  console.log(URL.parse('ssr://' + base64_decode(url)))
+  return `ssr://${base64_decode(url)}`
+}
+
+function getMimemiType (url) {
+  const qs = QS.parse(URL.parse(url).query)
+  let mimemiType
+  if (qs.mu) {
+    switch (qs.mu) {
+      case '0':
+        mimemiType = 'ssr'
+        break
+      case '1':
+        mimemiType = 'ssr995'
+        break
+      case '3':
+        mimemiType = 'ssd'
+        break
+      case '4':
+        mimemiType = 'ss'
+        break
+      default:
+        mimemiType = 0
+        break
+    }
+  } else if(qs.clash || qs.clashr) {
+    // clash
+    mimemiType = 'clash'
+  } else if(qs.surge || qs.surfboard) {
+    // sruge
+    mimemiType = 'surge'
+  } else {
+    mimemiType = 0
+  }
+  return mimemiType
 }

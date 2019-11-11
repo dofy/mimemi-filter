@@ -1,8 +1,6 @@
 let express = require('express');
 let router = express.Router();
 let request = require('request')
-let URL = require('url')
-let QS = require('querystring')
 
 const title = 'MIMEMI Filter'
 // const baseUrl = 'https://suburl.mimemi.net/link/'
@@ -22,11 +20,11 @@ const title = 'MIMEMI Filter'
 //   ],
 // }
 const points = [
-  { title: 'V0', value: 'V0', },
-  { title: 'V1', value: 'V1', },
-  { title: 'V2', value: 'V2', },
-  { title: 'V3', value: 'V3', },
-  { title: 'V4', value: 'V4', },
+  { title: 'V0', value: '.V0.', },
+  { title: 'V1', value: '.V1.', },
+  { title: 'V2', value: '.V2.', },
+  { title: 'V3', value: '.V3.', },
+  { title: 'V4', value: '.V4.', },
   { title: '回国', value: '回国', },
   { title: '中转', value: '中转', },
   { title: '特殊用途', value: '特殊用途', },
@@ -41,14 +39,27 @@ router.get('/', function(req, res, next) {
 router.get('/sub', (req, res, next) => {
   const data = req.query
   const mimemiUrl = decodeURIComponent(data.murl)
-  const url = URL.parse(mimemiUrl)
-  const qs = QS.parse(url.query)
-  console.log(mimemiUrl, qs)
   request.get(mimemiUrl, (err, response, body) => {
-    // console.log(err, body)
+    let newBody
+    if (/\?mu\=\d+/.test(mimemiUrl)) {
+      // base64
+      let reg = new RegExp(data.exclude.join('|').replace(/\./g, '\\b'), 'i')
+      body = base64_decode(body).trim().split(/\s+/)
+      newBody = []
+      body.map(item => {
+        item = decodeURIComponent(item)
+        if (!reg.test(item)) {
+          newBody.push(item)
+        }
+      })
+      console.log(data)
+    } else {
+      // config
+      newBody = body
+      console.log('config...')
+    }
+    res.status(200).json({ newBody })
   })
-
-  res.status(200).json(data)
 })
 
 // edit url
@@ -62,3 +73,11 @@ router.get('/edit', (req, res, next) => {
 })
 
 module.exports = router;
+
+function base64_encode (str) {
+  return Buffer(str.toString()).toString('base64');
+}
+
+function base64_decode (str) {
+  return new Buffer(str, 'base64').toString();
+}

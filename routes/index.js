@@ -47,28 +47,50 @@ router.get('/sub', (req, res, next) => {
     // filter
     let excludeReg = new RegExp((util.isArray(data.exclude) ? data.exclude.join('|') : data.exclude).replace(/\./g, '\\b'), 'i')
     request.get(mimemiUrl, (err, response, body) => {
-      // res.header(response.headers)
+      const PG = 'Proxy Group'
       let type = 'base64'
       switch (mimemiType) {
         case 'ssr':
-          body = base64_decode(body).trim().split(/\s+/)
-          body = body.map( ssrParser )
-          break
         case 'ssr995':
+        case 'ss':
+          body = base64_decode(body).trim().split(/\s+/)
+          body = body.filter( url => ssrParser(url, excludeReg) )
+          body = base64_encode(body.join('\n'))
           break
         case 'ssd':
           break
-        case 'ss':
-          break
         case 'clash':
           type = 'yaml'
+          body = yaml.parse(body)
+          body.Proxy = body.Proxy.filter(proxy => !excludeReg.test(proxy.name))
+          body[PG].map(item => {
+            item.proxies = item.proxies.filter(name => !excludeReg.test(name))
+          })
+          body = yaml.stringify(body)
           break
         case 'surge':
           type = 'ini'
+          let lineOne = body.split('\n')[0].trim()
+          console.log(lineOne)
+          body = ini.parse(body)
+          Object.keys(body.Proxy).map(key => {
+            if (excludeReg.test(key)) {
+              delete body.Proxy[key]
+            }
+          })
+          Object.keys(body[PG]).map(key => {
+            body[PG][key] = body[PG][key]
+                              .split(',')
+                              .filter(name => !excludeReg.test(name))
+                              .join()
+          })
+          body = [lineOne, ini.stringify(body)].join('\n')
           break
         default: break
       }
-      res.status(200).json({ type, body })
+      res.header(response.headers)
+      res.status(200).send(body)
+      // res.status(200).json({ type, body })
     })
   }
 })
@@ -83,10 +105,17 @@ function base64_decode (str) {
   return Buffer.from(str, 'base64').toString()
 }
 
-function ssrParser (url) {
-  url = url.replace('ssr://', '')
-  console.log(URL.parse('ssr://' + base64_decode(url)))
-  return `ssr://${base64_decode(url)}`
+function ssrParser (url, reg) {
+  let urlObj = URL.parse(url)
+  let checkStr
+  if (urlObj.protocol === 'ssr:') {
+    urlObj = URL.parse('//' + base64_decode(url.replace(urlObj.protocol + '//', '')))
+    qs = QS.parse(urlObj.query)
+    checkStr = base64_decode(qs.remarks)
+  } else {
+    checkStr = decodeURIComponent(urlObj.hash)
+  }
+  return !reg.test(checkStr)
 }
 
 function getMimemiType (url) {

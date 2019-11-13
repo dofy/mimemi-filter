@@ -1,6 +1,7 @@
 h1 {
   padding-top: 30px;
 }
-.active {
+.active, .active:hover {
   font-weight: bold;
+  text-decoration: line-through;
 }

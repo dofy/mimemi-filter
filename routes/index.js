@@ -37,6 +37,7 @@ router.get('/sub', (req, res, next) => {
   const data = req.query
   const mimemiUrl = decodeURIComponent(data.murl)
   const mimemiType = getMimemiType(mimemiUrl)
+  const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl
 
   if (mimemiType === 0) {
     // wrong url
@@ -70,22 +71,31 @@ router.get('/sub', (req, res, next) => {
           body = yaml.stringify(body)
           break
         case 'surge':
+          let firstLine
+          let ruleLines
           type = 'ini'
-          let lineOne = body.split('\n')[0].trim()
-          console.log(lineOne)
-          body = ini.parse(body)
+          // get firstline
+          body = body.split(/\r?\n/)
+          firstLine = body.shift().trim().replace(mimemiUrl, fullUrl)
+          // get rule lines
+          body = body.join('\n').split(/\[rule\]/i)
+          ruleLines = body.pop()
+          // parse
+          body = ini.parse(body.join('\n'))
+          // remove points in Proxy
           Object.keys(body.Proxy).map(key => {
             if (excludeReg.test(key)) {
               delete body.Proxy[key]
             }
           })
+          // remove points in Proxy Group
           Object.keys(body[PG]).map(key => {
             body[PG][key] = body[PG][key]
                               .split(',')
                               .filter(name => !excludeReg.test(name))
                               .join()
           })
-          body = [lineOne, ini.stringify(body)].join('\n')
+          body = [firstLine, ini.stringify(body), '[Rule]', ruleLines].join('\n')
           break
         default: break
       }

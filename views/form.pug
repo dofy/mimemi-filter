@@ -45,7 +45,9 @@ block javascript
   script.
     const suburl = '#{suburl}'
     updateUrl()
-    $('input').change(updateUrl)
+    $('input').change(updateUrl).focus(evt => {
+      evt.currentTarget.select()
+    })
     $('button').click(evt => {
       let input = $(`#${evt.currentTarget.value}`)
       let target = $(evt.currentTarget)

@@ -23,14 +23,15 @@ block content
         |  此处粘贴 MIMEMI 提供的订阅/托管地址
     .form-group.bg-light.p-3.shadow-sm
       legend Exclude Point(s)
-      .btn-group-toggle(data-toggle='buttons')
-        each item, index in points
-          .btn-group.mr-1
-            label.btn.btn-primary(class={active: (data.exclude && (data.exclude == item.value || data.exclude.indexOf(item.value)) !== -1)})
-              input.custom-control-input(
-                name='exclude' type='checkbox' value=item.value
-                checked=(data.exclude && (data.exclude == item.value || data.exclude.indexOf(item.value)) !== -1) && 'checked')
-              | #{item.title}
+      each group in [points, area]
+        .btn-group-toggle(data-toggle='buttons')
+          each item, index in group
+            .btn-group.mr-1.mb-1
+              label.btn.btn-primary(class={active: (data.exclude && (data.exclude == item.value || data.exclude.indexOf(item.value)) !== -1)})
+                input.custom-control-input(
+                  name='exclude' type='checkbox' value=item.value
+                  checked=(data.exclude && (data.exclude == item.value || data.exclude.indexOf(item.value)) !== -1) && 'checked')
+                | #{item.title}
       small.form-text.text-muted
         i.fas.fa-info-circle
         |  选择希望去掉的节点

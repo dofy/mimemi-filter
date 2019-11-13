@@ -21,13 +21,27 @@ const points = [
   { title: '特殊用途', value: '特殊用途', },
 ]
 
+const area = [
+  { title: '日本', value: '日本', },
+  { title: '韩国', value: '韩国', },
+  { title: '英国', value: '英国', },
+  { title: '美国', value: '美国', },
+  { title: '德国', value: '德国', },
+  { title: '香港', value: '香港', },
+  { title: '台湾', value: '台湾', },
+  { title: '俄罗斯', value: '俄罗斯', },
+  { title: '菲律宾', value: '菲律宾', },
+  { title: '新加坡', value: '新加坡', },
+  { title: '土耳其', value: '土耳其', },
+]
+
 // edit url
 router.get('/', (req, res, next) => {
   const host = req.host
   const data = req.query
   res.render('form', {
     // title, data, baseUrl, mimemi, points,
-    title, host, data, points,
+    title, host, data, points, area,
     suburl: `${req.protocol}://${req.get('host')}`,
   });
 })

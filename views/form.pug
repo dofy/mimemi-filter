@@ -18,15 +18,22 @@ block content
     .form-group.bg-light.p-3.shadow-sm
       legend MIMEMI Subscribe Url
       input#murl.form-control(name='murl' placeholder='Your MIMEMI Subscribe Url' value=data.murl)
+      small.form-text.text-muted
+        i.fas.fa-info-circle
+        |  此处粘贴 MIMEMI 提供的订阅/托管地址
     .form-group.bg-light.p-3.shadow-sm
       legend Exclude Point(s)
-      .btn-group.btn-group-toggle(data-toggle='buttons')
+      .btn-group-toggle(data-toggle='buttons')
         each item, index in points
-          label.btn.btn-primary(class={active: (data.exclude && (data.exclude == item.value || data.exclude.indexOf(item.value)) !== -1)})
-            input.custom-control-input(
-              name='exclude' type='checkbox' value=item.value
-              checked=(data.exclude && (data.exclude == item.value || data.exclude.indexOf(item.value)) !== -1) && 'checked')
-            | #{item.title}
+          .btn-group.mr-1
+            label.btn.btn-primary(class={active: (data.exclude && (data.exclude == item.value || data.exclude.indexOf(item.value)) !== -1)})
+              input.custom-control-input(
+                name='exclude' type='checkbox' value=item.value
+                checked=(data.exclude && (data.exclude == item.value || data.exclude.indexOf(item.value)) !== -1) && 'checked')
+              | #{item.title}
+      small.form-text.text-muted
+        i.fas.fa-info-circle
+        |  选择希望去掉的节点
     .form-group.bg-light.p-3.shadow-sm
       .input-group.mb-3
         .input-group-prepend
@@ -34,12 +41,19 @@ block content
         input#suburl.form-control.text-muted(type='text' readonly)
         .input-group-append
           button.btn.btn-primary(type='button' value='suburl') Copy
+      small.form-text.text-muted
+        i.fas.fa-info-circle
+        |  用该地址在相应的 App 中重新订阅
+    .form-group.bg-light.p-3.shadow-sm
       .input-group.mb-3
         .input-group-prepend
           label(for='editurl').input-group-text Subscribe Editor
         input#editurl.form-control.text-muted(type='text' readonly)
         .input-group-append
           button.btn.btn-primary(type='button' value='editurl') Copy
+      small.form-text.text-muted
+        i.fas.fa-info-circle
+        |  你可以保存这个地址，以便后期进行修改（当然，不保存也无所谓）
 
 block javascript
   script.

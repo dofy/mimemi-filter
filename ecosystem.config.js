@@ -4,14 +4,15 @@ module.exports = {
     script: './bin/www',
     instances: 1,
     autorestart: true,
-    watch: true,
     max_memory_restart: '1G',
     ignore_watch: ['views', 'public'],
     env: {
+      watch: true,
       PORT: 4000,
       NODE_ENV: 'development'
     },
     env_production: {
+      watch: false,
       PORT: 4000,
       NODE_ENV: 'production'
     }

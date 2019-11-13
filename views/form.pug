@@ -3,9 +3,20 @@ extends layout
 block content
   h1
     a(href='/')= title
+  p.alert.alert-warning
+    | 欢迎使用 MIMEMI 过滤器，该工具主要针对 MIMEMI 服务提供的的订阅内容和格式进行处理，去除不希望出现的服务节点。
+    br
+    strong 目前支持的格式：
+    | SSR、SSR 995 端口、SS、Clash、ClashR
+    br
+    strong 暂不支持以下格式：
+    | SSD、Surge 2/3、Surfboard
+    br
+    strong 项目地址：
+    a(href='https://github.com/dofy/mimemi-filter') https://github.com/dofy/mimemi-filter
   form
     .form-group.bg-light.p-3.shadow-sm
-      lable(for='murl') MIMEMI Subscribe Url
+      legend MIMEMI Subscribe Url
       input#murl.form-control(name='murl' placeholder='Your MIMEMI Subscribe Url' value=data.murl)
     .form-group.bg-light.p-3.shadow-sm
       legend Exclude Point(s)

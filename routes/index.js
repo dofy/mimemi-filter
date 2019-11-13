@@ -23,10 +23,11 @@ const points = [
 
 // edit url
 router.get('/', (req, res, next) => {
+  const host = req.host
   const data = req.query
   res.render('form', {
     // title, data, baseUrl, mimemi, points,
-    title, data, points,
+    title, host, data, points,
     suburl: `${req.protocol}://${req.get('host')}`,
   });
 })

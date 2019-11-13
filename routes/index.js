@@ -74,6 +74,8 @@ router.get('/sub', (req, res, next) => {
           let firstLine
           let ruleLines
           type = 'ini'
+          // remove comments
+          body = body.replace(/^\/\/.*$/gm, '')
           // get firstline
           body = body.split(/\r?\n/)
           firstLine = body.shift().trim().replace(mimemiUrl, fullUrl)
@@ -95,7 +97,7 @@ router.get('/sub', (req, res, next) => {
                               .filter(name => !excludeReg.test(name))
                               .join()
           })
-          body = [firstLine, ini.stringify(body), '[Rule]', ruleLines].join('\n')
+          body = [firstLine, ini.stringify(body, { whitespace: true }), '[Rule]', ruleLines].join('\n')
           break
         default: break
       }

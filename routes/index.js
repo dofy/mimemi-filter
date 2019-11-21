@@ -17,6 +17,7 @@ const points = [
   { title: 'V3', value: '.V3.', },
   { title: 'V4', value: '.V4.', },
   { title: '回国', value: '回国', },
+  { title: '游戏', value: '游戏', },
   { title: '中转', value: '中转', },
   { title: '特殊用途', value: '特殊用途', },
 ]

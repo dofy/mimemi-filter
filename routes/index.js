@@ -7,6 +7,8 @@ const ini = require('ini')
 const URL = require('url')
 const QS = require('querystring')
 
+const useHttps = true
+
 const router = express.Router();
 
 const title = 'MIMEMI Filter'
@@ -43,7 +45,7 @@ router.get('/', (req, res, next) => {
   res.render('form', {
     // title, data, baseUrl, mimemi, points,
     title, host, data, points, area,
-    suburl: `${req.protocol}://${req.get('host')}`,
+    suburl: `${useHttps ? 'https' : 'http'}://${req.get('host')}`,
   });
 })
 

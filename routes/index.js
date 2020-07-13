@@ -66,8 +66,7 @@ router.get('/sub', (req, res, next) => {
     // filter
     let excludeReg = new RegExp((util.isArray(data.exclude) ? data.exclude.join('|') : data.exclude).replace(/\./g, '\\b'), 'i')
     request.get(mimemiUrl, (err, response, body) => {
-      const PG = 'Proxy Group'
-      let type = 'base64'
+      let PG = null
       switch (mimemiType) {
         case 'ssr':
         case 'ssr995':
@@ -79,9 +78,9 @@ router.get('/sub', (req, res, next) => {
         case 'ssd':
           break
         case 'clash':
-          type = 'yaml'
+          PG = 'proxy-groups'
           body = yaml.parse(body)
-          body.Proxy = body.Proxy.filter(proxy => !excludeReg.test(proxy.name))
+          body.proxies = body.proxies.filter(proxy => !excludeReg.test(proxy.name))
           body[PG].map(item => {
             item.proxies = item.proxies.filter(name => !excludeReg.test(name))
           })
@@ -90,7 +89,7 @@ router.get('/sub', (req, res, next) => {
         case 'surge':
           let firstLine
           let ruleLines
-          type = 'ini'
+          PG = 'Proxy Group'
           // remove comments
           body = body.replace(/^\/\/.*$/gm, '')
           // get firstline
@@ -120,7 +119,6 @@ router.get('/sub', (req, res, next) => {
       }
       res.header(response.headers)
       res.status(200).send(body)
-      // res.status(200).json({ type, body })
     })
   }
 })

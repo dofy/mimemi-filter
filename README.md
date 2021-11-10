@@ -8,19 +8,19 @@
 
 通过中间服务进行重新订阅，中间服务获取原始配置文件，根据要求对原始内容进行处理并返回新配置，以实现过滤效果。
 
-#### 支持的格式 
+#### 支持的格式
 
-  - SSR
-  - SSR 995 端口
-  - ClashR
-  - SS
-  - Clash
-  - Surge 2/3
-  - Surfboard
+- SSR
+- SSR 995 端口
+- ClashR
+- SS
+- Clash
+- Surge 2/3
+- Surfboard
 
 #### 暂不支持
 
-  - SSD
+- SSD
 
 #### 访问
 

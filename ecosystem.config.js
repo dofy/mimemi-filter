@@ -1,22 +1,24 @@
 module.exports = {
-  apps : [{
-    name: 'mFilter',
-    script: './bin/www',
-    instances: 1,
-    autorestart: true,
-    max_memory_restart: '1G',
-    ignore_watch: ['views', 'public'],
-    env: {
-      PORT: 4000,
-      watch: true,
-      NODE_ENV: 'development'
+  apps: [
+    {
+      name: 'mFilter',
+      script: './bin/www',
+      instances: 1,
+      autorestart: true,
+      max_memory_restart: '1G',
+      ignore_watch: ['views', 'public'],
+      env: {
+        PORT: 4000,
+        watch: true,
+        NODE_ENV: 'development',
+      },
+      env_production: {
+        PORT: 4000,
+        watch: false,
+        NODE_ENV: 'production',
+      },
     },
-    env_production: {
-      PORT: 4000,
-      watch: false,
-      NODE_ENV: 'production'
-    }
-  }],
+  ],
 
   /*
   deploy : {

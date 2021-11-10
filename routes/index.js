@@ -13,28 +13,29 @@ const router = express.Router();
 
 const title = 'MIMEMI Filter';
 const points = [
-  { title: 'V0', value: '.V0.' },
-  { title: 'V1', value: '.V1.' },
+  // { title: 'V0', value: '.V0.' },
+  // { title: 'V1', value: '.V1.' },
   { title: 'V2', value: '.V2.' },
   { title: 'V3', value: '.V3.' },
   { title: 'V4', value: '.V4.' },
-  { title: '回国', value: '回国' },
-  { title: '游戏', value: '游戏' },
-  { title: '中转', value: '中转' },
-  { title: '特殊用途', value: '特殊用途' },
+  // { title: '回国', value: '回国' },
+  // { title: '游戏', value: '游戏' },
+  // { title: '中转', value: '中转' },
+  // { title: '特殊用途', value: '特殊用途' },
 ];
 
 const area = [
   { title: '日本', value: '日本' },
   { title: '韩国', value: '韩国' },
-  { title: '英国', value: '英国' },
+  // { title: '英国', value: '英国' },
   { title: '美国', value: '美国' },
   { title: '德国', value: '德国' },
   { title: '香港', value: '香港' },
   { title: '台湾', value: '台湾' },
   { title: '俄罗斯', value: '俄罗斯' },
-  { title: '菲律宾', value: '菲律宾' },
-  { title: '新加坡', value: '新加坡' },
+  { title: '加拿大', value: '加拿大' },
+  // { title: '菲律宾', value: '菲律宾' },
+  // { title: '新加坡', value: '新加坡' },
   { title: '土耳其', value: '土耳其' },
 ];
 
